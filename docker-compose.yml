@@ -1,0 +1,17 @@
+version: "3.9"
+services:
+  backend:
+    build:
+      context: ./backend
+    container_name: tamsui-map-backend
+    ports:
+      - "8080:8080"
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: tamsui-map-frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend

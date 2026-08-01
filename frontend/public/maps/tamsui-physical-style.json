@@ -1,0 +1,256 @@
+{
+  "version": 8,
+  "name": "Tamsui 1884 Physical Basemap",
+  "sources": {
+    "openmaptiles": {
+      "type": "vector",
+      "url": "https://tiles.openfreemap.org/planet",
+      "attribution": "OpenFreeMap / OpenMapTiles / OpenStreetMap contributors"
+    },
+    "terrain": {
+      "type": "raster-dem",
+      "tiles": [
+        "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png"
+      ],
+      "tileSize": 256,
+      "maxzoom": 15,
+      "encoding": "terrarium",
+      "attribution": "Terrain Tiles: Mapzen / AWS Open Data"
+    },
+    "port-water-mask": {
+      "type": "geojson",
+      "data": "/maps/tamsui-port-water-mask.geojson"
+    }
+  },
+  "layers": [
+    {
+      "id": "paper",
+      "type": "background",
+      "paint": {
+        "background-color": "#d5c39d"
+      }
+    },
+    {
+      "id": "terrain-relief",
+      "type": "hillshade",
+      "source": "terrain",
+      "paint": {
+        "hillshade-illumination-direction": 315,
+        "hillshade-exaggeration": 0.38,
+        "hillshade-shadow-color": "#665944",
+        "hillshade-highlight-color": "#eadfbe",
+        "hillshade-accent-color": "#8b7959"
+      }
+    },
+    {
+      "id": "natural-wood",
+      "type": "fill",
+      "source": "openmaptiles",
+      "source-layer": "landcover",
+      "filter": [
+        "==",
+        [
+          "get",
+          "class"
+        ],
+        "wood"
+      ],
+      "paint": {
+        "fill-color": "#aaa582",
+        "fill-opacity": 0.32
+      }
+    },
+    {
+      "id": "natural-grass",
+      "type": "fill",
+      "source": "openmaptiles",
+      "source-layer": "landcover",
+      "filter": [
+        "==",
+        [
+          "get",
+          "class"
+        ],
+        "grass"
+      ],
+      "paint": {
+        "fill-color": "#beb58f",
+        "fill-opacity": 0.24
+      }
+    },
+    {
+      "id": "natural-scrub",
+      "type": "fill",
+      "source": "openmaptiles",
+      "source-layer": "landcover",
+      "filter": [
+        "==",
+        [
+          "get",
+          "class"
+        ],
+        "scrub"
+      ],
+      "paint": {
+        "fill-color": "#aaa17c",
+        "fill-opacity": 0.26
+      }
+    },
+    {
+      "id": "natural-wetland",
+      "type": "fill",
+      "source": "openmaptiles",
+      "source-layer": "landcover",
+      "filter": [
+        "==",
+        [
+          "get",
+          "class"
+        ],
+        "wetland"
+      ],
+      "paint": {
+        "fill-color": "#9fa899",
+        "fill-opacity": 0.34,
+        "fill-outline-color": "#7e8f86"
+      }
+    },
+    {
+      "id": "natural-sand",
+      "type": "fill",
+      "source": "openmaptiles",
+      "source-layer": "landcover",
+      "filter": [
+        "==",
+        [
+          "get",
+          "class"
+        ],
+        "sand"
+      ],
+      "paint": {
+        "fill-color": "#d8c897",
+        "fill-opacity": 0.58
+      }
+    },
+    {
+      "id": "real-water",
+      "type": "fill",
+      "source": "openmaptiles",
+      "source-layer": "water",
+      "filter": [
+        "!=",
+        [
+          "get",
+          "brunnel"
+        ],
+        "tunnel"
+      ],
+      "paint": {
+        "fill-color": "#849a9d",
+        "fill-outline-color": "#5b7071"
+      }
+    },
+    {
+      "id": "real-rivers",
+      "type": "line",
+      "source": "openmaptiles",
+      "source-layer": "waterway",
+      "filter": [
+        "all",
+        [
+          "==",
+          [
+            "get",
+            "class"
+          ],
+          "river"
+        ],
+        [
+          "!=",
+          [
+            "get",
+            "brunnel"
+          ],
+          "tunnel"
+        ]
+      ],
+      "layout": {
+        "line-cap": "round",
+        "line-join": "round"
+      },
+      "paint": {
+        "line-color": "#647f82",
+        "line-width": [
+          "interpolate",
+          [
+            "linear"
+          ],
+          [
+            "zoom"
+          ],
+          10,
+          0.6,
+          14,
+          2.2,
+          17,
+          5
+        ]
+      }
+    },
+    {
+      "id": "real-waterways",
+      "type": "line",
+      "source": "openmaptiles",
+      "source-layer": "waterway",
+      "filter": [
+        "all",
+        [
+          "!=",
+          [
+            "get",
+            "class"
+          ],
+          "river"
+        ],
+        [
+          "!=",
+          [
+            "get",
+            "brunnel"
+          ],
+          "tunnel"
+        ]
+      ],
+      "layout": {
+        "line-cap": "round",
+        "line-join": "round"
+      },
+      "paint": {
+        "line-color": "#718a8c",
+        "line-width": [
+          "interpolate",
+          [
+            "linear"
+          ],
+          [
+            "zoom"
+          ],
+          12,
+          0.4,
+          17,
+          2.2
+        ]
+      }
+    },
+    {
+      "id": "historical-port-water-mask",
+      "type": "fill",
+      "source": "port-water-mask",
+      "paint": {
+        "fill-color": "#849a9d",
+        "fill-opacity": 1
+      }
+    }
+  ]
+}

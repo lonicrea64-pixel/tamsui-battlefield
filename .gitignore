@@ -1,0 +1,16 @@
+node_modules/
+backend/dist/
+frontend/dist/
+coverage/
+.DS_Store
+.env
+
+.qa/
+.codex_image_extract/
+tmp/
+frontend/.next/
+frontend/.edge-qa/
+frontend/.edge-qa-war/
+frontend/qa-*.png
+frontend/*.log
+*.log

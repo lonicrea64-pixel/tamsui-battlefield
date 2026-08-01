@@ -1,0 +1,72 @@
+openapi: 3.0.3
+info:
+  title: Tamsui Historical Map API
+  version: 1.0.0
+  description: MVP API for interactive Tamsui battlefield learning experience.
+servers:
+  - url: http://localhost:8080/api/v1
+paths:
+  /health:
+    get:
+      summary: Service health check
+      responses:
+        '200':
+          description: Healthy
+  /sites:
+    get:
+      summary: Get all battlefield site summaries
+      parameters:
+        - in: query
+          name: lang
+          schema:
+            type: string
+            enum: [zh-TW, zh-CN, en]
+      responses:
+        '200':
+          description: Site summaries
+        '400':
+          description: Invalid query
+  /sites/{siteId}:
+    get:
+      summary: Get detail of one battlefield site
+      parameters:
+        - in: path
+          name: siteId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Site detail
+        '400':
+          description: Invalid siteId
+        '404':
+          description: Site not found
+  /timeline:
+    get:
+      summary: Get battle timeline
+      responses:
+        '200':
+          description: Timeline events
+  /learning-check:
+    post:
+      summary: Submit a site quiz answer and get immediate feedback
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [siteId, answerId]
+              properties:
+                siteId:
+                  type: string
+                answerId:
+                  type: string
+      responses:
+        '200':
+          description: Feedback result
+        '422':
+          description: Invalid body or answer option
+        '404':
+          description: Site not found
