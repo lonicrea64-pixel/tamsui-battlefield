@@ -63,11 +63,13 @@ const wanshanSource = {
 };
 
 export const defaultLayers: Record<LayerKey, boolean> = {
-  sites: true,
-  routes: true,
-  defenses: true,
-  zones: true,
-  fleet: true
+  terrain: true,
+  barriers: true,
+  battleZones: true,
+  facilities: true,
+  troops: true,
+  fleet: true,
+  heritage: true
 };
 
 export const locationMarkerGlyphs: Record<string, string> = {
@@ -93,19 +95,19 @@ export const locations: HistoricalLocation[] = [
     title: "法軍登陸點",
     ancientName: "沙崙海灘",
     modernName: "沙崙海岸",
-    coordinates: [25.188649, 121.414648],
-    accuracy: "documented-area",
+    coordinates: [25.190054, 121.416014],
+    accuracy: "verified",
     accuracyNote: "登陸與撤退均發生在沙崙海灘。位置依戰場圖所示的舊沙岸窄帶標定；現代填海、港區與海岸工程已改變靠岸線。",
     category: "landing",
     faction: "french",
     period: "battle",
     firstPhase: 5,
     summary: "1884 年 10 月 8 日上午，約六百名法軍及工兵分乘小艇，在沙崙海灘登陸。",
-    detail: "法軍約於 9 時 35 分開始上岸，編成五個連向內陸推進。沙灘便於小艇接近，卻也是部隊與艦隊之間唯一穩定的往返通道；下午撤退時，各連仍須回到沙崙涉水登艇。",
+    detail: "法軍約於 9 時 35 分開始上岸，分成三股向內陸推進。沙灘便於小艇接近，卻也是部隊與艦隊之間唯一穩定的往返通道；下午撤退時，各連仍須回到沙崙涉水登艇。",
     strategicMeaning: "登陸後的法軍必須穿越海岸灌叢、圳溝與濕地，艦砲視線與步兵聯絡逐步受阻。灘頭一旦失去秩序，退路便會直接受到威脅。",
     historicalSignificance: "沙崙保存了滬尾之役由海上轉入陸戰的空間關係。今日海岸已變形，仍可由河口、外海與內陸方向辨認登陸行動的基本軸線。",
     facts: ["10 月 8 日約 9 時 35 分開始登陸", "登陸部隊約六百人，另有工兵分隊", "撤退與重新登艇仍由沙崙海灘進行"],
-    relatedEventIds: ["landing-five-columns", "boats-clear-beach"],
+    relatedEventIds: ["landing-three-prongs", "boats-clear-beach"],
     imageCaption: "沙崙登陸與撤退海岸",
     modernAddress: "新北市淡水區沙崙海岸",
     modernStatus: "舊沙岸已受填築與港區工程改變，登陸位置應以海岸帶理解。",
@@ -126,6 +128,7 @@ export const locations: HistoricalLocation[] = [
     ancientName: "沙崙外城岸",
     modernName: "清法戰爭滬尾古戰場城岸遺蹟",
     coordinates: [25.185825, 121.419468],
+    modernCoordinatePoints: [[25.189237, 121.420349], [25.187667, 121.419003]],
     accuracy: "documented-area",
     accuracyNote: "外城岸線位依沙崙至瓦店埤西側的戰場圖重新標定；現存殘段受到道路、校地與後續工程切割，各段年代仍須分別判讀。",
     category: "defense",
@@ -137,7 +140,7 @@ export const locations: HistoricalLocation[] = [
     strategicMeaning: "城岸迫使進攻者改道進入林叢、濕地與狹窄通路。清軍可利用土堤後方集結兵力，再從北、中、南各方向反擊。",
     historicalSignificance: "殘存土堤是少數仍可由地形直接辨認的古戰場遺構，也記錄了戰時築防與戰後海防整備的延續。",
     facts: ["第 2 號標示沙崙外城岸", "內城岸另沿烏啾埔、大庄與港子平延伸", "現存線段的年代與 1884 年配置仍須分段判讀"],
-    relatedEventIds: ["landing-five-columns", "forest-melee"],
+    relatedEventIds: ["landing-three-prongs", "forest-melee"],
     imageCaption: "城岸土堤與壕溝現況",
     modernStatus: "部分土堤仍存，其餘已被道路、住宅與基地切割。",
     todayIntro: "沙崙停車場與後備學校附近仍可辨識土堤高差。這些殘段反映防禦工程的走向，但不等於一條保存完整、年代單一的城牆。",
@@ -323,7 +326,7 @@ export const locations: HistoricalLocation[] = [
     title: "白砲臺遺址",
     ancientName: "油車口白砲臺",
     modernName: "海巡署艦隊分署附近",
-    coordinates: [25.176747, 121.42158],
+    coordinates: [25.177200, 121.420104],
     modernCoordinates: [25.176747, 121.42158],
     accuracy: "documented-area",
     accuracyNote: "白砲臺已不存。官方文化路徑將位置定在金目港溪出海口南岸、約今日海巡署艦隊分署附近。",
@@ -357,6 +360,8 @@ export const locations: HistoricalLocation[] = [
     ancientName: "林投、黃槿阻障林",
     modernName: "沙崙至金目港仔間舊林帶",
     coordinates: [25.180683, 121.418698],
+    modernCoordinates: [25.190333, 121.419165],
+    modernArea: [[25.191296, 121.419326], [25.191111, 121.418922], [25.190833, 121.418498], [25.190648, 121.418195], [25.190370, 121.417852], [25.190185, 121.417952], [25.190000, 121.418155], [25.189722, 121.418518], [25.189444, 121.418963], [25.189352, 121.419165], [25.189444, 121.419387], [25.189630, 121.419670], [25.189815, 121.419872], [25.190000, 121.420094], [25.190185, 121.420336], [25.190370, 121.420417], [25.190556, 121.420357], [25.190741, 121.420195], [25.190926, 121.419953], [25.191111, 121.419670]],
     accuracy: "documented-area",
     accuracyNote: "「金針木耳林」是由林投、黃槿等海岸植物構成的帶狀地景，舊林帶多已消失，只能依戰圖與歷史地貌表示其大致範圍。",
     category: "battlefield",
@@ -381,7 +386,8 @@ export const locations: HistoricalLocation[] = [
     title: "淡水海水浴場舊址",
     ancientName: "沙崙海岸",
     modernName: "淡水海水浴場舊址",
-    coordinates: [25.183009, 121.415148],
+    coordinates: [25.189425, 121.417391],
+    modernCoordinates: [25.189425, 121.417391],
     accuracy: "documented-area",
     accuracyNote: "海水浴場位於沙崙大片沙灘，設施已不存；其範圍與 1884 年登陸海岸部分重疊。",
     category: "heritage",
@@ -393,7 +399,7 @@ export const locations: HistoricalLocation[] = [
     strategicMeaning: "海水浴場不屬 1884 年戰場設施；其舊址有助於重建當時沙灘的寬度與可登陸性。",
     historicalSignificance: "戰場、浴場與現代港區先後占用同一海岸，呈現沙崙地景從軍事通道轉為休閒場所，再進入工程開發的變化。",
     facts: ["1904 年設立", "1920 年改建公共休憩所", "浴場沙灘與法軍登陸帶部分重疊"],
-    relatedEventIds: ["landing-five-columns", "boats-clear-beach"],
+    relatedEventIds: ["landing-three-prongs", "boats-clear-beach"],
     imageCaption: "日治時期淡水海水浴場與今日沙崙",
     modernStatus: "浴場設施已不存，原有沙灘受港區與海岸工程改變。",
     todayIntro: "今日沙崙仍可辨識海岸方向，但浴場建築與完整沙灘景觀已消失。歷史照片可補充現地無法保留的海岸尺度。",
@@ -412,7 +418,8 @@ export const locations: HistoricalLocation[] = [
     title: "望高樓原址",
     ancientName: "望高樓石塔",
     modernName: "望高樓推定原址",
-    coordinates: [25.186182, 121.407593],
+    coordinates: [25.186379, 121.408724],
+    modernCoordinates: [25.186182, 121.407593],
     accuracy: "approximate",
     accuracyNote: "石塔已不存；位置依文化路徑、舊海岸與現有地名資料推定，現場沒有可供測量的原始基址。",
     category: "command",
@@ -438,7 +445,7 @@ export const locations: HistoricalLocation[] = [
     ancientName: "沙崙石滬角",
     modernName: "石滬角舊地名範圍",
     coordinates: [25.186241, 121.405026],
-    modernCoordinates: [25.1919, 121.4148],
+    modernCoordinates: [25.186241, 121.405026],
     accuracy: "approximate",
     accuracyNote: "石滬角位於沙崙舊岸與潮間帶，原有石滬多已坍塌或被填築；位置以舊地名及歷史海岸範圍表示。",
     category: "heritage",
@@ -450,7 +457,7 @@ export const locations: HistoricalLocation[] = [
     strategicMeaning: "礁石、淺灘與潮位會限制小艇靠岸方向，但現有資料不足以把任何一座石滬視為 1884 年軍事工事。",
     historicalSignificance: "石滬角記錄滬尾河口更長期的漁業與聚落史，說明沙崙並非空白戰場，而是持續被居民使用的海岸。",
     facts: ["石滬利用漲退潮捕魚", "原有石滬多已坍塌或被填築", "位置以舊地名與潮間帶範圍表示"],
-    relatedEventIds: ["landing-five-columns"],
+    relatedEventIds: ["landing-three-prongs"],
     imageCaption: "沙崙舊岸與石滬角潮間帶",
     modernStatus: "舊地名仍可考，完整石滬景觀已難辨認。",
     todayIntro: "現地已受填築與港區工程改變。石滬角應視為一段舊海岸文化範圍，而不是保存完整的單一構造物。",
@@ -468,16 +475,18 @@ export const locations: HistoricalLocation[] = [
 export const historicalSiteGeometries: HistoricalSiteGeometry[] = [
   {
     locationId: "shalun-landing",
-    kind: "area",
-    positions: [[25.190285, 121.416888], [25.189062, 121.417981], [25.188832, 121.417607], [25.187482, 121.412918], [25.187660, 121.411307], [25.188527, 121.411191], [25.188883, 121.414500]],
-    labelPosition: [25.188195, 121.413407],
-    note: "1884 年 10 月 8 日法軍小艇靠岸、部隊登陸與撤退所用的沙崙舊沙岸窄帶。"
+    kind: "point",
+    positions: [[25.190054, 121.416014]],
+    labelPosition: [25.190054, 121.416014],
+    note: "1884 年 10 月 8 日法軍小艇靠岸、部隊登陸與撤退所用的沙崙舊沙岸窄帶。",
+    startPhase: 4,
+    endPhase: 5
   },
   {
     locationId: "city-bank-remains",
     kind: "line",
-    positions: [[25.191375, 121.419983], [25.189274, 121.420069], [25.187355, 121.420326], [25.185825, 121.419468], [25.184087, 121.418323], [25.181649, 121.419611], [25.178588, 121.421299]],
-    labelPosition: [25.185825, 121.419468],
+    positions: [[25.189237, 121.420349], [25.189050, 121.418450], [25.188400, 121.418600], [25.187667, 121.419003], [25.186870, 121.418270], [25.186000, 121.417690], [25.185130, 121.417080], [25.184260, 121.415920], [25.183400, 121.415300], [25.182960, 121.415620], [25.182090, 121.417850], [25.181220, 121.418890], [25.180350, 121.419830], [25.179480, 121.420570], [25.178610, 121.420980], [25.177800, 121.422180]],
+    labelPosition: [25.185384, 121.416456],
     note: "沙崙外城岸由北向南延伸的線位；現存殘段受道路、校地與後續工程切割。"
   },
   {
@@ -511,9 +520,11 @@ export const historicalSiteGeometries: HistoricalSiteGeometry[] = [
   {
     locationId: "tiansheng-battlefield",
     kind: "area",
-    positions: [[25.1843, 121.4212], [25.1840, 121.4254], [25.1813, 121.4260], [25.1780, 121.4244], [25.1766, 121.4217], [25.1796, 121.4205], [25.1827, 121.4204]],
-    labelPosition: [25.181183, 121.425116],
-    note: "中崙、金目港仔與瓦店埤相連的主要接戰帶。"
+    positions: [[25.178879, 121.422793], [25.180450, 121.422820], [25.181560, 121.423240], [25.182480, 121.425360], [25.182150, 121.425760], [25.180360, 121.425520], [25.179720, 121.425050]],
+    labelPosition: [25.180850, 121.424360],
+    note: "中崙、金目港仔與瓦店埤相連的主要接戰帶。",
+    startPhase: 6,
+    endPhase: 7
   },
   {
     locationId: "sufu-temple",
@@ -524,30 +535,30 @@ export const historicalSiteGeometries: HistoricalSiteGeometry[] = [
   },
   {
     locationId: "white-battery",
-    kind: "area",
-    positions: [[25.17755, 121.42075], [25.17745, 121.42225], [25.17625, 121.42235], [25.17610, 121.42095]],
-    labelPosition: [25.176747, 121.42158],
+    kind: "point",
+    positions: [[25.177200, 121.420104]],
+    labelPosition: [25.177200, 121.420104],
     note: "金目港溪口南岸、今日海巡署艦隊分署附近的白砲臺位置。"
   },
   {
     locationId: "thorn-forest",
-    kind: "area",
-    positions: [[25.182445, 121.416312], [25.181476, 121.415615], [25.180953, 121.417979], [25.178322, 121.419442], [25.179045, 121.420769], [25.181614, 121.419935]],
-    labelPosition: [25.180683, 121.418698],
+    kind: "point",
+    positions: [[25.184200, 121.423400]],
+    labelPosition: [25.184200, 121.423400],
     note: "沙崙沙灘與金目港仔濕地之間的林投、黃槿阻障帶。"
   },
   {
     locationId: "old-bathing-beach",
-    kind: "point",
-    positions: [[25.185767, 121.413538], [25.184006, 121.411909], [25.180354, 121.416582], [25.181876, 121.418523]],
-    labelPosition: [25.183009, 121.415148],
+    kind: "area",
+    positions: [[25.188060, 121.409860], [25.188430, 121.412850], [25.188950, 121.414980], [25.189710, 121.416350], [25.190790, 121.417870], [25.192420, 121.419420], [25.192310, 121.419930], [25.191860, 121.420310], [25.190580, 121.419110], [25.189710, 121.418240], [25.188840, 121.417270], [25.188190, 121.416090], [25.187970, 121.415410], [25.187750, 121.414230], [25.188280, 121.413430]],
+    labelPosition: [25.189425, 121.417391],
     note: "日治時期淡水海水浴場所用的沙崙海岸範圍。"
   },
   {
     locationId: "wanggao-tower",
     kind: "point",
-    positions: [[25.186182, 121.407593]],
-    labelPosition: [25.186182, 121.407593],
+    positions: [[25.186379, 121.408724]],
+    labelPosition: [25.186379, 121.408724],
     note: "望高樓已不存；位置依河口北岸、舊海岸與文化路徑資料推定。"
   },
   {
@@ -620,14 +631,14 @@ export const battleEvents: BattleEvent[] = [
     locationIds: ["shalun-landing", "white-battery"]
   },
   {
-    id: "landing-five-columns",
+    id: "landing-three-prongs",
     phase: 5,
     date: "10 月 8 日",
     time: "約 10:00",
-    title: "法軍登陸成功並分成五隊推進",
-    shortTitle: "五路推進",
+    title: "法軍登陸成功並分成三股推進",
+    shortTitle: "三股推進",
     summary: "約六百名法軍建立灘頭，向中崙、油車口方向展開多路進攻。",
-    detail: "五個連由沙崙向烏啾埔、中崙、水雷營等方向分進；現存史料不足以逐段還原每支部隊的精確行軍路線。",
+    detail: "法軍由登陸點分成北、中、南三股，分別向大庄埔、中崙與水雷營方向推進；路線依戰場关系概化。",
     faction: "french",
     locationIds: ["shalun-landing", "thorn-forest", "shihujiao"]
   },
@@ -651,7 +662,7 @@ export const battleEvents: BattleEvent[] = [
     title: "法軍預備隊增援受阻",
     shortTitle: "援軍受阻",
     summary: "灘頭預備兵力試圖接應前隊，卻在狹窄通道與伏擊壓力下難以扭轉戰局。",
-    detail: "前後隊之間被地形切割，法軍無法有效重整五路部隊。",
+    detail: "前後隊之間被地形切割，法軍無法有效重整三股部隊。",
     faction: "mixed",
     locationIds: ["thorn-forest", "shalun-landing"]
   },
@@ -716,36 +727,22 @@ export const battleEvents: BattleEvent[] = [
 ];
 
 export const battleRoutes: BattleRoute[] = [
-  { id: "river-probe-route", title: "法軍小艇試探河口阻絕線", faction: "french", kind: "advance", positions: [[25.1700, 121.3970], [25.1705, 121.4050], [25.1720, 121.4140]], startPhase: 2, endPhase: 2, accuracy: "documented-area" },
-  { id: "french-column-1", title: "第 1 連向烏啾埔砲位方向推進", faction: "french", kind: "advance", positions: [[25.1890, 121.4146], [25.1872, 121.4185], [25.1840, 121.4230], [25.1800, 121.4287]], startPhase: 5, endPhase: 7, accuracy: "approximate" },
-  { id: "french-column-2", title: "第 2 連向水雷營方向推進", faction: "french", kind: "advance", positions: [[25.1887, 121.4145], [25.1840, 121.4172], [25.1800, 121.4218], [25.1772, 121.4238]], startPhase: 5, endPhase: 7, accuracy: "approximate" },
-  { id: "french-column-3", title: "第 3 連向中崙推進", faction: "french", kind: "advance", positions: [[25.1885, 121.4142], [25.1855, 121.4160], [25.1820, 121.4210]], startPhase: 5, endPhase: 7, accuracy: "approximate" },
-  { id: "french-column-4", title: "第 4 連向瓦店埤南側推進", faction: "french", kind: "advance", positions: [[25.1882, 121.4140], [25.1830, 121.4160], [25.1790, 121.4210]], startPhase: 5, endPhase: 7, accuracy: "approximate" },
-  { id: "french-column-5", title: "第 5 連掩護北翼", faction: "french", kind: "advance", positions: [[25.1891, 121.4150], [25.1910, 121.4190], [25.1925, 121.4230]], startPhase: 5, endPhase: 7, accuracy: "approximate" },
-  { id: "qing-north-counter", title: "港子平、大庄方向清軍反擊", faction: "qing", kind: "deployment", positions: [[25.1965, 121.4220], [25.1920, 121.4235], [25.1885, 121.4190]], startPhase: 6, endPhase: 9, accuracy: "documented-area" },
-  { id: "qing-center-counter", title: "烏啾埔內城岸後方清軍反擊", faction: "qing", kind: "deployment", positions: [[25.1845, 121.4315], [25.1835, 121.4250], [25.1815, 121.4215]], startPhase: 6, endPhase: 9, accuracy: "documented-area" },
-  { id: "qing-south-counter", title: "油車口、水雷營方向清軍反擊", faction: "qing", kind: "deployment", positions: [[25.1768, 121.4265], [25.1782, 121.4230], [25.1792, 121.4205]], startPhase: 6, endPhase: 9, accuracy: "documented-area" },
-  { id: "french-retreat", title: "法軍沿推進走廊撤回沙崙", faction: "french", kind: "retreat", positions: [[25.1800, 121.4230], [25.1830, 121.4185], [25.1887, 121.4145]], startPhase: 8, endPhase: 10, accuracy: "documented-area" }
+  { id: "river-probe-white-battery", title: "法軍艦艇試探油車口白砲臺", faction: "french", kind: "advance", positions: [[25.175827, 121.407037], [25.176300, 121.413800], [25.177050, 121.417600]], startPhase: 2, endPhase: 2, accuracy: "documented-area" },
+  { id: "river-probe-obstruction", title: "法軍艦艇試探河口阻絕線", faction: "french", kind: "advance", positions: [[25.170723, 121.406218], [25.171400, 121.409800], [25.172350, 121.412900]], startPhase: 2, endPhase: 2, accuracy: "documented-area" },
+  { id: "french-prong-north", title: "北股向大庄埔方向推進", faction: "french", kind: "advance", positions: [[25.190054, 121.416014], [25.189700, 121.417500], [25.189100, 121.419000], [25.188200, 121.421000], [25.188000, 121.422500], [25.188486, 121.424558]], startPhase: 5, endPhase: 5, accuracy: "approximate" },
+  { id: "french-prong-center", title: "中股向中崙方向推進", faction: "french", kind: "advance", positions: [[25.190054, 121.416014], [25.187500, 121.416550], [25.185300, 121.417600], [25.183500, 121.419800], [25.182000, 121.422000], [25.182671, 121.423575]], startPhase: 5, endPhase: 5, accuracy: "approximate" },
+  { id: "french-prong-south", title: "南股沿海岸向水雷營方向推進", faction: "french", kind: "advance", positions: [[25.190054, 121.416014], [25.187756, 121.415824], [25.185578, 121.415679], [25.183401, 121.415390], [25.182857, 121.415800], [25.182312, 121.417485], [25.181768, 121.418665], [25.180679, 121.420013], [25.179591, 121.421024], [25.178502, 121.422276], [25.177879, 121.423002]], startPhase: 5, endPhase: 5, accuracy: "approximate" },
 ];
 
 export const defenseLines: DefenseLine[] = [
   {
     id: "inner-bank-line",
     title: "1884 內城岸：烏啾埔至大庄、港子平",
-    positions: [[25.191122, 121.426905], [25.189558, 121.428117], [25.187993, 121.429935], [25.185773, 121.431631], [25.184135, 121.432075], [25.181661, 121.431712], [25.179040, 121.430985], [25.177439, 121.430500], [25.176457, 121.427834]],
+    positions: [[25.190710, 121.426040], [25.189840, 121.426800], [25.188960, 121.427540], [25.188090, 121.428260], [25.187220, 121.429160], [25.186350, 121.430040], [25.185480, 121.430820], [25.184610, 121.431380], [25.183740, 121.431840], [25.182860, 121.432100], [25.181990, 121.432190], [25.181120, 121.432130], [25.180250, 121.431890], [25.179470, 121.431640]],
     startPhase: 0,
-    endPhase: 10,
+    endPhase: 12,
     accuracy: "documented-area",
     note: "內城岸由油車口北側沿烏啾埔高地、大庄延伸至港子平；線位依戰場圖標定，不代表現存城岸的測量界線。"
-  },
-  {
-    id: "wetland-fire-line",
-    title: "金目港仔濕地對射線",
-    positions: [[25.1890, 121.4207], [25.1848, 121.4210], [25.1805, 121.4220], [25.1767, 121.4231]],
-    startPhase: 6,
-    endPhase: 9,
-    accuracy: "documented-area",
-    note: "官方文化路徑記載，雙方隔著難以通過的濕地形成約 1,500 公尺火線；此線標示交戰前緣，不是城牆。"
   },
   {
     id: "river-obstruction",
@@ -759,22 +756,25 @@ export const defenseLines: DefenseLine[] = [
 ];
 
 export const tacticalSymbols: TacticalSymbol[] = [
-  { id: "landing", title: "法軍登陸點", kind: "landing", coordinates: [25.188043, 121.411968], faction: "french", startPhase: 5, endPhase: 10, note: "小艇接近沙崙舊沙岸、部隊開始上岸的位置。", accuracy: "documented-area" },
+  { id: "landing", title: "法軍登陸點", kind: "landing", coordinates: [25.190054, 121.416014], faction: "french", startPhase: 4, endPhase: 5, note: "小艇接近沙崙舊沙岸、部隊開始上岸的位置。", accuracy: "verified" },
   { id: "french-base", title: "法軍灘頭集結點", kind: "french-base", coordinates: [25.188649, 121.414648], faction: "french", startPhase: 5, endPhase: 10, note: "預備隊、彈藥與登艇秩序集中於登陸範圍中央；以單一定位點表示。", accuracy: "documented-area" },
-  { id: "shalun-battery", title: "沙崙舊砲臺", kind: "battery", coordinates: [25.1900, 121.4170], faction: "qing", startPhase: 0, endPhase: 4, note: "沙崙防區的舊式砲位，確切位置屬推定。", accuracy: "approximate" },
+  { id: "french-north-prong-position", title: "法軍北股推進位置", kind: "french-position", coordinates: [25.188486, 121.424558], faction: "french", startPhase: 5, endPhase: 8, note: "三股推進至請求撤退期間的北股位置。", accuracy: "documented-area" },
+  { id: "french-center-prong-position", title: "法軍中股推進位置", kind: "french-position", coordinates: [25.182671, 121.423575], faction: "french", startPhase: 5, endPhase: 8, note: "三股推進至請求撤退期間的中股位置。", accuracy: "documented-area" },
+  { id: "french-south-prong-position", title: "法軍南股推進位置", kind: "french-position", coordinates: [25.177879, 121.423002], faction: "french", startPhase: 5, endPhase: 8, note: "三股推進至請求撤退期間的南股位置。", accuracy: "documented-area" },
+  { id: "french-return-to-beach-position", title: "法軍退回海灘位置", kind: "french-position", coordinates: [25.190872, 121.419076], faction: "french", startPhase: 9, endPhase: 9, note: "法軍退回海灘階段的位置。", accuracy: "documented-area" },
+  { id: "shalun-battery", title: "沙崙舊砲臺", kind: "battery", coordinates: [25.184968, 121.419092], faction: "qing", startPhase: 0, endPhase: 4, note: "沙崙防區的舊式砲位，確切位置屬推定。", accuracy: "approximate" },
   { id: "zhonglun-battery", title: "中崙舊砲臺", kind: "battery", coordinates: [25.1817, 121.4230], faction: "qing", startPhase: 0, endPhase: 4, note: "中崙方向的河口防區砲位。", accuracy: "approximate" },
-  { id: "white-battery-symbol", title: "油車口白砲臺", kind: "battery", coordinates: [25.176747, 121.42158], faction: "qing", startPhase: 0, endPhase: 4, note: "金目港溪口南岸、今日海巡署艦隊分署附近。", accuracy: "documented-area" },
-  { id: "wuciupu-battery", title: "烏啾埔新砲臺（1884）", kind: "battery", coordinates: [25.1798, 121.4290], faction: "qing", startPhase: 0, endPhase: 10, note: "烏啾埔高地的戰時砲位；不是戰後興建的現存滬尾礮臺。", accuracy: "documented-area" },
-  { id: "mine-camp", title: "水雷營", kind: "qing-position", coordinates: [25.1758, 121.4240], faction: "qing", startPhase: 0, endPhase: 10, note: "米粉寮溪口右岸、今日忠烈祠下方一帶，負責河口水雷點火。", accuracy: "documented-area" },
+  { id: "white-battery-symbol", title: "油車口白砲臺", kind: "battery", coordinates: [25.177200, 121.420104], faction: "qing", startPhase: 0, endPhase: 12, note: "金目港溪口南岸、今日海巡署艦隊分署附近。", accuracy: "documented-area" },
+  { id: "wuciupu-battery", title: "烏啾埔新砲臺（1884）", kind: "battery", coordinates: [25.179577, 121.430167], faction: "qing", startPhase: 0, endPhase: 10, note: "烏啾埔高地的戰時砲位；不是戰後興建的現存滬尾礮臺。", accuracy: "documented-area" },
+  { id: "mine-camp", title: "水雷營", kind: "qing-position", coordinates: [25.1764, 121.427687], faction: "qing", startPhase: 0, endPhase: 10, note: "米粉寮溪口右岸、今日忠烈祠下方一帶，負責河口水雷點火。", accuracy: "verified" },
   { id: "mine-1", title: "水雷阻絕", kind: "mine", coordinates: [25.175655, 121.419865], faction: "qing", startPhase: 0, endPhase: 12, note: "水雷配置於水雷營外側的河口狹窄航道；符號表示配置帶。", accuracy: "documented-area" },
   { id: "mine-2", title: "水雷阻絕", kind: "mine", coordinates: [25.173460, 121.417227], faction: "qing", startPhase: 0, endPhase: 12, note: "水雷配置於水雷營外側的河口狹窄航道；符號表示配置帶。", accuracy: "documented-area" },
   { id: "sunken-1", title: "沉船塞港", kind: "sunken-ship", coordinates: [25.174503, 121.418666], faction: "qing", startPhase: 0, endPhase: 12, note: "載石船沉入河口狹窄航道，與水雷共同形成阻絕。", accuracy: "documented-area" },
   { id: "sunken-2", title: "沉船塞港", kind: "sunken-ship", coordinates: [25.172547, 121.415548], faction: "qing", startPhase: 0, endPhase: 12, note: "載石沉船集中於河口阻絕帶，符號不代表單艘船的精確船位。", accuracy: "documented-area" },
-  { id: "qing-north", title: "港子平、大庄守軍", kind: "qing-position", coordinates: [25.1935, 121.4260], faction: "qing", startPhase: 5, endPhase: 9, note: "內城岸北段後方的守軍範圍。", accuracy: "documented-area" },
-  { id: "qing-center", title: "烏啾埔、中崙守軍", kind: "qing-position", coordinates: [25.1842, 121.4305], faction: "qing", startPhase: 5, endPhase: 9, note: "內城岸與高地後方的中路兵力範圍。", accuracy: "documented-area" },
-  { id: "qing-south", title: "油車口守軍", kind: "qing-position", coordinates: [25.1768, 121.4260], faction: "qing", startPhase: 5, endPhase: 9, note: "水雷營、油車口與濕地南端的守軍範圍。", accuracy: "documented-area" },
-  { id: "melee", title: "瓦店埤近戰區", kind: "battle", coordinates: [25.1792, 121.4230], faction: "mixed", startPhase: 6, endPhase: 9, note: "瓦店埤、水溝與小橋附近的主要近身戰區。", accuracy: "documented-area" },
-  { id: "signal", title: "望高樓撤退信號", kind: "signal", coordinates: [25.186182, 121.407593], faction: "french", startPhase: 8, endPhase: 8, note: "望高樓塔址屬推定範圍。", accuracy: "approximate" }
+  { id: "qing-north", title: "港子平、大庄守軍", kind: "qing-guard", coordinates: [25.187775, 121.427111], faction: "qing", startPhase: 5, endPhase: 9, note: "內城岸北段後方的守軍範圍。", accuracy: "documented-area" },
+  { id: "qing-center", title: "烏啾埔、中崙守軍", kind: "qing-guard", coordinates: [25.183973, 121.427328], faction: "qing", startPhase: 5, endPhase: 9, note: "內城岸與高地後方的中路兵力範圍。", accuracy: "documented-area" },
+  { id: "qing-south", title: "油車口守軍", kind: "qing-guard", coordinates: [25.177740, 121.425690], faction: "qing", startPhase: 5, endPhase: 9, note: "水雷營、油車口與濕地南端的守軍範圍。", accuracy: "documented-area" },
+  { id: "signal", title: "望高樓撤退信號", kind: "signal", coordinates: [25.186379, 121.408724], faction: "french", startPhase: 8, endPhase: 8, note: "望高樓塔址屬推定範圍。", accuracy: "approximate" }
 ];
 
 export const battleZones: BattleZone[] = [];
@@ -797,11 +797,27 @@ export const mapLabels: MapLabel[] = [
 ];
 
 export const fleetPositions: Array<{ id: string; name: string; coordinates: [number, number] }> = [
-  { id: "f1", name: "拉加利桑尼亞號", coordinates: [25.1920, 121.3940] },
-  { id: "f2", name: "凱旋號", coordinates: [25.1840, 121.3930] },
-  { id: "f3", name: "德斯丹號", coordinates: [25.1760, 121.3940] },
-  { id: "f4", name: "雷諾堡號", coordinates: [25.1680, 121.3970] },
-  { id: "f5", name: "巴雅號", coordinates: [25.1605, 121.3845] }
+  { id: "f1", name: "拉加利桑尼亞號", coordinates: [25.196726, 121.411093] },
+  { id: "f2", name: "凱旋號", coordinates: [25.190519, 121.399951] },
+  { id: "f3", name: "德斯丹號", coordinates: [25.181470, 121.400718] },
+  { id: "f4", name: "雷諾堡號", coordinates: [25.175827, 121.407037] },
+  { id: "f5", name: "巴雅號", coordinates: [25.170723, 121.406218] }
+];
+
+export const fleetBombardmentPositions: Array<[number, number]> = [
+  [25.193085, 121.407648],
+  [25.190310, 121.403429],
+  [25.185109, 121.401896],
+  [25.182439, 121.405697],
+  [25.180522, 121.409556]
+];
+
+export const fleetLandingPositions: Array<[number, number]> = [
+  [25.192517, 121.417143],
+  [25.191401, 121.415447],
+  [25.190384, 121.413751],
+  [25.189761, 121.412056],
+  [25.189309, 121.410360]
 ];
 
 export { people } from "@/data/contentData";

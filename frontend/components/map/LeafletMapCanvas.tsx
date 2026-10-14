@@ -22,11 +22,12 @@ import {
   battleRoutes,
   battleZones,
   defenseLines,
+  fleetBombardmentPositions,
+  fleetLandingPositions,
   fleetPositions,
   historicalSiteGeometries,
   locationMarkerGlyphs,
   locations,
-  mapLabels,
   tacticalSymbols
 } from "@/data/battleData";
 import {
@@ -58,7 +59,7 @@ function MapFocus({ selectedLocationId, mode }: { selectedLocationId: string | n
     if (!location) return;
     const historicalGeometry = historicalSiteGeometries.find((item) => item.locationId === selectedLocationId);
     const coordinates = mode === "modern"
-      ? location.coordinates
+      ? location.modernCoordinatePoints?.[0] ?? location.modernCoordinates ?? location.coordinates
       : historicalGeometry?.labelPosition ?? location.coordinates;
     map.flyTo(coordinates, Math.max(map.getZoom(), 14), { duration: 0.7 });
   }, [map, mode, selectedLocationId]);
@@ -89,7 +90,7 @@ function MapOverviewConstraints({ mode }: { mode: MapMode }) {
   return null;
 }
 
-function rampartPath(positions: Array<[number, number]>) {
+function rampartPath(positions: Array<[number, number]>, style: "alternating" | "crenellated" = "alternating") {
   const validPositions = positions.filter(([latitude, longitude]) =>
     Number.isFinite(latitude) && Number.isFinite(longitude)
   );
@@ -132,6 +133,23 @@ function rampartPath(positions: Array<[number, number]>) {
     const length = Math.hypot(latitudeDelta, longitudeDelta);
     if (length === 0) continue;
 
+    if (style === "crenellated") {
+      const shoulderStart = pointAt((totalLength * (tooth + 0.22)) / toothCount);
+      const shoulderEnd = pointAt((totalLength * (tooth + 0.78)) / toothCount);
+      const amplitude = Math.min(0.00032, length * 0.46);
+      const normalLatitude = (-longitudeDelta / length) * amplitude;
+      const normalLongitude = (latitudeDelta / length) * amplitude;
+
+      result.push(
+        shoulderStart,
+        [shoulderStart[0] + normalLatitude, shoulderStart[1] + normalLongitude],
+        [shoulderEnd[0] + normalLatitude, shoulderEnd[1] + normalLongitude],
+        shoulderEnd,
+        end
+      );
+      continue;
+    }
+
     const side = tooth % 2 === 0 ? 1 : -1;
     const amplitude = Math.min(0.00022, length * 0.34);
     const normalLatitude = (-longitudeDelta / length) * amplitude * side;
@@ -156,6 +174,30 @@ function siteGeometryIcon(geometry: HistoricalSiteGeometry, glyph: string, activ
   });
 }
 
+function historicalTextIcon(text: string, active: boolean) {
+  return divIcon({
+    className: "historical-text-label-host",
+    html: `<span class="historical-text-label ${active ? "active" : ""}">${text}</span>`,
+    iconSize: [36, 176],
+    iconAnchor: [18, 88]
+  });
+}
+
+function historicalTerrainTextIcon(text: string, layout: "diagonal" | "horizontal") {
+  const characters = Array.from(text).map((character) => "<span>" + character + "</span>").join("");
+  return divIcon({
+    className: "historical-terrain-text-label-host",
+    html: '<span class="historical-terrain-text-label ' + layout + '">' + characters + "</span>",
+    iconSize: [210, 120],
+    iconAnchor: [105, 60]
+  });
+}
+
+const historicalTerrainTextLabels: Array<{ id: string; text: string; position: [number, number]; layout: "diagonal" | "horizontal" }> = [
+  { id: "jinmugang-wetland-text", text: "金目港仔濕地", position: [25.181000, 121.420600], layout: "diagonal" },
+  { id: "wuciupu-highland-text", text: "烏啾埔高地", position: [25.182000, 121.431600], layout: "horizontal" }
+];
+
 function SiteGeometryLayer({
   geometry,
   active,
@@ -167,6 +209,23 @@ function SiteGeometryLayer({
 }) {
   const location = locations.find((item) => item.id === geometry.locationId);
   if (!location) return null;
+
+  if (geometry.locationId === "thorn-forest") {
+    return (
+      <Marker
+        position={geometry.labelPosition}
+        icon={historicalTextIcon("金針木耳林", active)}
+        eventHandlers={{ click: () => onSelect(location.id) }}
+        keyboard
+        title={location.title}
+      >
+        <Tooltip permanent={active} direction="right" offset={[18, 0]} className={`battle-label ${active ? "active" : ""}`}>
+          <strong>{location.title}</strong>
+          <span>{geometry.note}</span>
+        </Tooltip>
+      </Marker>
+    );
+  }
 
   if (geometry.kind === "point") {
     return <MapMarker location={location} mode="historical" active={active} onSelect={onSelect} />;
@@ -189,7 +248,7 @@ function SiteGeometryLayer({
         opacity: 0.9,
         dashArray: "7 6"
       };
-  const plottedPositions = geometry.locationId === "city-bank-remains" && geometry.kind === "line" ? rampartPath(geometry.positions) : geometry.positions;
+  const plottedPositions = geometry.locationId === "city-bank-remains" ? rampartPath(geometry.positions, "crenellated") : geometry.positions;
   const eventHandlers = { click: () => onSelect(location.id) };
 
   return (
@@ -203,9 +262,6 @@ function SiteGeometryLayer({
           <Tooltip sticky><strong>{location.title}</strong><span>{geometry.note}</span></Tooltip>
         </Polygon>
       )}
-      {geometry.locationId === "city-bank-remains" && geometry.kind === "line" ? (
-        <Marker position={geometry.positions[geometry.positions.length - 1]} icon={defenseLineArrowIcon(geometry.positions)} interactive={false} />
-      ) : null}
       <Marker
         position={geometry.labelPosition}
         icon={siteGeometryIcon(geometry, locationMarkerGlyphs[location.id] ?? String(location.brochureIndex), active, location.faction)}
@@ -220,18 +276,6 @@ function SiteGeometryLayer({
       </Marker>
     </>
   );
-}
-
-function defenseLineArrowIcon(positions: [number, number][]) {
-  const end = positions[positions.length - 1];
-  const previous = positions[positions.length - 2];
-  const bearing = Math.atan2(-(end[0] - previous[0]), end[1] - previous[1]) * 180 / Math.PI;
-  return divIcon({
-    className: "route-arrow-host",
-    html: `<span class="route-arrow qing deployment" style="--bearing:${bearing}deg"></span>`,
-    iconSize: [24, 24],
-    iconAnchor: [12, 12]
-  });
 }
 
 const historicalCleanupMasks: Array<{ id: string; color: string; positions: Array<[number, number]> }> = [
@@ -296,9 +340,10 @@ function routeBearing(route: BattleRoute) {
 }
 
 function routeArrowIcon(route: BattleRoute) {
+  const arrowColor = routeColors[route.faction];
   return divIcon({
     className: "route-arrow-host",
-    html: `<span class="route-arrow ${route.faction} ${route.kind}" style="--bearing:${routeBearing(route)}deg"></span>`,
+    html: `<svg class="route-arrow ${route.faction} ${route.kind}" style="--bearing:${routeBearing(route)}deg;color:${arrowColor}" viewBox="0 0 24 24" aria-hidden="true"><path d="M1 2L18 12L1 22Z" /></svg>`,
     iconSize: [24, 24],
     iconAnchor: [12, 12]
   });
@@ -306,7 +351,9 @@ function routeArrowIcon(route: BattleRoute) {
 
 const symbolGlyph: Record<TacticalSymbol["kind"], string> = {
   "french-base": "⚑",
+  "french-position": "法",
   "qing-position": "營",
+  "qing-guard": "清",
   battery: "砲",
   mine: "✹",
   "sunken-ship": "╳",
@@ -324,15 +371,6 @@ function symbolIcon(symbol: TacticalSymbol) {
   });
 }
 
-function defenseTickIcon() {
-  return divIcon({
-    className: "defense-tick-host",
-    html: '<svg class="bank-line-tick" viewBox="0 0 16 12" aria-hidden="true"><path d="M1 11V3H12V8H5" /></svg>',
-    iconSize: [14, 14],
-    iconAnchor: [7, 7]
-  });
-}
-
 export default function LeafletMapCanvas({
   mode,
   faction,
@@ -342,10 +380,21 @@ export default function LeafletMapCanvas({
   onSelectLocation
 }: LeafletMapCanvasProps) {
   const visibleLocations = useMemo(
-    () => layers.sites && mode === "modern" ? locations : [],
-    [layers.sites, mode]
+    () => mode === "modern" ? locations.filter((location) => location.id === "old-bathing-beach" ? layers.terrain : layers.heritage) : [],
+    [layers.heritage, layers.terrain, mode]
   );
-  const visibleHistoricalSites = layers.sites && mode === "historical" ? historicalSiteGeometries : [];
+  const visibleHistoricalSites = mode === "historical"
+    ? historicalSiteGeometries.filter((geometry) =>
+        activePhase >= (geometry.startPhase ?? 0) && activePhase <= (geometry.endPhase ?? 12)
+      ).filter((geometry) => {
+        if (geometry.locationId === "city-bank-remains") return layers.barriers;
+        if (geometry.locationId === "tiansheng-battlefield") return layers.battleZones;
+        if (geometry.locationId === "white-battery") return layers.facilities;
+        if (geometry.locationId === "thorn-forest") return layers.terrain;
+        if (geometry.locationId === "old-bathing-beach") return layers.terrain;
+        return layers.heritage;
+      })
+    : [];
 
   const fleetIcon = useMemo(
     () => divIcon({
@@ -367,6 +416,12 @@ export default function LeafletMapCanvas({
 
   const visibleDefenseLines = defenseLines
     .filter((line) => activePhase >= line.startPhase && activePhase <= line.endPhase);
+
+  const activeFleetPositions = activePhase === 4
+    ? fleetBombardmentPositions
+    : activePhase === 3 || (activePhase >= 5 && activePhase <= 9)
+      ? fleetLandingPositions
+      : fleetPositions.map((ship) => ship.coordinates);
 
   return (
     <div className={`leaflet-stage ${mode === "historical" ? "historical-mode" : "modern-mode"}`}>
@@ -409,11 +464,11 @@ export default function LeafletMapCanvas({
           />
         )) : null}
 
-        {mode === "historical" && layers.defenses && (faction === "all" || faction === "qing")
+        {mode === "historical" && layers.barriers && (faction === "all" || faction === "qing")
           ? visibleDefenseLines.map((line) => (
               <Polyline
                 key={line.id}
-                positions={line.id === "inner-bank-line" ? rampartPath(line.positions) : line.positions}
+                positions={line.id === "inner-bank-line" ? rampartPath(line.positions, "crenellated") : line.positions}
                 pathOptions={{
                   color: line.id === "river-obstruction" ? "#514332" : line.id === "wetland-fire-line" ? "#315f62" : "#8a302d",
                   weight: line.id === "river-obstruction" ? 4 : line.id === "wetland-fire-line" ? 3 : 5,
@@ -435,23 +490,23 @@ export default function LeafletMapCanvas({
             ))
           : null}
 
-        {mode === "historical" && layers.defenses && (faction === "all" || faction === "qing")
+        {mode === "historical" && layers.barriers && (faction === "all" || faction === "qing")
           ? visibleDefenseLines.filter((line) => line.id === "inner-bank-line").map((line) => (
-              <Marker key={`${line.id}-label`} position={line.positions[4]} icon={defenseLineLabelIcon("內")} interactive={false} />
+              <Marker key={`${line.id}-label`} position={line.positions[Math.floor(line.positions.length / 2)]} icon={defenseLineLabelIcon("內")} interactive={false} />
             ))
           : null}
 
-        {mode === "historical" && layers.routes
+        {mode === "historical" && layers.troops
           ? visibleRoutes.map((route) => (
               <Polyline
                 key={route.id}
                 positions={route.positions}
                 pathOptions={{
                   color: routeColors[route.faction],
-                  weight: route.kind === "retreat" ? 4 : 5,
-                  opacity: 0.92,
+                  weight: route.id.startsWith("river-probe-") || route.kind === "retreat" ? 4 : 5,
+                  opacity: route.id.startsWith("river-probe-") ? 0.78 : 0.92,
                   dashArray: route.kind === "retreat" ? "8 8" : undefined,
-                  lineCap: "round"
+                  lineCap: "butt"
                 }}
               >
                 <Tooltip sticky><strong>{route.title}</strong><span>箭線依史料概化，不代表逐步測量軌跡</span></Tooltip>
@@ -459,7 +514,7 @@ export default function LeafletMapCanvas({
             ))
           : null}
 
-        {mode === "historical" && layers.routes
+        {mode === "historical" && layers.troops
           ? visibleRoutes.map((route) => (
               <Marker
                 key={`${route.id}-arrow`}
@@ -470,7 +525,7 @@ export default function LeafletMapCanvas({
             ))
           : null}
 
-        {mode === "historical" && layers.zones
+        {mode === "historical" && layers.battleZones
           ? battleZones
               .filter((zone) => activePhase >= zone.startPhase && activePhase <= zone.endPhase)
               .filter((zone) => faction === "all" || zone.faction === "mixed" || zone.faction === faction)
@@ -493,8 +548,16 @@ export default function LeafletMapCanvas({
               ))
           : null}
 
-        {mode === "historical" && layers.defenses
-          ? visibleSymbols.map((symbol) => (
+        {mode === "historical" && layers.facilities
+          ? visibleSymbols.filter((symbol) => ["battery", "mine", "sunken-ship", "qing-position"].includes(symbol.kind)).map((symbol) => (
+              <Marker key={symbol.id} position={symbol.coordinates} icon={symbolIcon(symbol)} interactive>
+                <Tooltip direction="top"><strong>{symbol.title}</strong><span>{symbol.note}</span></Tooltip>
+              </Marker>
+            ))
+          : null}
+
+        {mode === "historical" && layers.troops
+          ? visibleSymbols.filter((symbol) => !["battery", "mine", "sunken-ship", "qing-position"].includes(symbol.kind)).map((symbol) => (
               <Marker key={symbol.id} position={symbol.coordinates} icon={symbolIcon(symbol)} interactive>
                 <Tooltip direction="top"><strong>{symbol.title}</strong><span>{symbol.note}</span></Tooltip>
               </Marker>
@@ -502,28 +565,32 @@ export default function LeafletMapCanvas({
           : null}
 
         {mode === "historical" && layers.fleet && activePhase <= 11 && (faction === "all" || faction === "french")
-          ? fleetPositions.map((ship) => (
-              <Marker key={ship.id} position={ship.coordinates} icon={fleetIcon} interactive>
-                <Tooltip direction="left"><strong>{ship.name}</strong><span>相對位置依歷史圖概化</span></Tooltip>
-              </Marker>
-            ))
+          ? (
+            <>
+              {activePhase === 11 ? (
+                <Polyline
+                  positions={activeFleetPositions}
+                  pathOptions={{ color: "#295f7e", weight: 2, opacity: 0.68, dashArray: "6 8" }}
+                  interactive={false}
+                />
+              ) : null}
+              {fleetPositions.map((ship, index) => (
+                <Marker key={ship.id} position={activeFleetPositions[index]} icon={fleetIcon} interactive>
+                  <Tooltip direction="left"><strong>{ship.name}</strong><span>相對位置依歷史圖概化</span></Tooltip>
+                </Marker>
+              ))}
+            </>
+          )
           : null}
 
-        {mode === "historical"
-          ? mapLabels.map((label) => (
-              <Marker
-                key={label.id}
-                position={label.coordinates}
-                icon={divIcon({
-                  className: "historical-label-host",
-                  html: `<span class="historical-label ${label.kind}">${label.title}</span>`,
-                  iconSize: [90, 20],
-                  iconAnchor: [45, 10]
-                })}
-                interactive={false}
-              />
-            ))
-          : null}
+        {mode === "historical" && layers.terrain ? historicalTerrainTextLabels.map((label) => (
+          <Marker
+            key={label.id}
+            position={label.position}
+            icon={historicalTerrainTextIcon(label.text, label.layout)}
+            interactive={false}
+          />
+        )) : null}
 
         {visibleHistoricalSites.map((geometry) => (
           <SiteGeometryLayer
@@ -534,15 +601,40 @@ export default function LeafletMapCanvas({
           />
         ))}
 
-        {visibleLocations.map((location) => (
-          <MapMarker
-            key={location.id}
-            location={location}
-            mode={mode}
-            active={selectedLocationId === location.id}
-            onSelect={onSelectLocation}
-          />
-        ))}
+        {mode === "modern" ? visibleLocations
+          .filter((location) => location.modernArea)
+          .map((location) => (
+            <Polygon
+              key={`${location.id}-modern-area`}
+              positions={location.modernArea!}
+              pathOptions={{
+                color: "#646964",
+                fillOpacity: 0,
+                weight: selectedLocationId === location.id ? 4 : 2.5,
+                opacity: 0.9,
+                dashArray: "8 6"
+              }}
+              eventHandlers={{ click: () => onSelectLocation(location.id) }}
+            >
+              <Tooltip sticky><strong>{location.modernName ?? location.title}</strong><span>{location.modernStatus}</span></Tooltip>
+            </Polygon>
+          )) : null}
+
+        {visibleLocations.flatMap((location) => {
+          const markerCoordinates = location.modernCoordinatePoints
+            ?? [location.modernCoordinates ?? location.coordinates];
+
+          return markerCoordinates.map((coordinates, index) => (
+            <MapMarker
+              key={`${location.id}-${index}`}
+              location={location}
+              mode={mode}
+              coordinateOverride={coordinates}
+              active={selectedLocationId === location.id}
+              onSelect={onSelectLocation}
+            />
+          ));
+        })}
 
         <MapFocus selectedLocationId={selectedLocationId} mode={mode} />
         <MapOverviewConstraints mode={mode} />

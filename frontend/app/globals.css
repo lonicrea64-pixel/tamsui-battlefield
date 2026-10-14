@@ -1413,6 +1413,62 @@ input:focus-visible {
   box-shadow: 0 0 0 6px rgba(244, 224, 177, 0.4), 0 7px 18px rgba(19, 31, 31, 0.4);
 }
 
+.historical-text-label-host {
+  background: transparent;
+  border: 0;
+}
+
+.historical-text-label {
+  display: block;
+  color: #646964;
+  font-family: "Noto Serif TC", "PMingLiU", serif;
+  font-size: 23px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  line-height: 1;
+  text-orientation: upright;
+  text-shadow: 0 1px 0 rgba(245, 233, 202, 0.9), 0 0 5px rgba(245, 233, 202, 0.8);
+  transition: color 150ms ease, transform 150ms ease;
+  writing-mode: vertical-rl;
+}
+
+.historical-text-label.active {
+  color: #3f4542;
+  transform: scale(1.08);
+}
+
+.historical-terrain-text-label-host {
+  border: 0;
+  background: transparent;
+}
+
+.historical-terrain-text-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: flex;
+  width: max-content;
+  gap: 0.12em;
+  color: #646964;
+  font-family: "Noto Serif TC", "PMingLiU", serif;
+  font-size: 23px;
+  font-weight: 700;
+  line-height: 1;
+  text-shadow: 0 1px 0 rgba(245, 233, 202, 0.9), 0 0 5px rgba(245, 233, 202, 0.8);
+}
+
+.historical-terrain-text-label.horizontal {
+  transform: translate(-50%, -50%);
+}
+
+.historical-terrain-text-label.diagonal {
+  transform: translate(-50%, -50%) rotate(32deg);
+}
+
+.historical-terrain-text-label.diagonal > span {
+  transform: rotate(-32deg);
+}
+
 .battle-marker.modern {
   background: #315c61;
 }
@@ -1420,6 +1476,14 @@ input:focus-visible {
 .battle-marker.historical.postwar {
   border-style: double;
   background: #655f53;
+}
+
+.battle-marker.historical.landing {
+  background: var(--french);
+}
+
+.battle-marker.historical.battery {
+  background: var(--qing);
 }
 
 .leaflet-tooltip.battle-label {
@@ -2353,36 +2417,21 @@ input:focus-visible {
 
 .route-arrow {
   display: block;
-  width: 0;
-  height: 0;
+  width: 24px;
+  height: 24px;
   transform: rotate(var(--bearing));
-  border-top: 8px solid transparent;
-  border-bottom: 8px solid transparent;
-  border-left: 16px solid #295f7e;
+  transform-origin: 50% 50%;
+  overflow: visible;
+  color: #295f7e;
   filter: drop-shadow(0 2px 1px rgba(31, 42, 39, 0.34));
 }
 
-.route-arrow.qing {
-  border-left-color: #8d2f2c;
+.route-arrow path {
+  fill: currentColor;
 }
 
 .route-arrow.retreat {
   opacity: 0.82;
-}
-
-.bank-line-tick {
-  display: block;
-  width: 16px;
-  height: 12px;
-  overflow: visible;
-}
-
-.bank-line-tick path {
-  fill: none;
-  stroke: #8a302d;
-  stroke-width: 3;
-  stroke-linecap: round;
-  stroke-linejoin: round;
 }
 
 .defense-tick {
@@ -2411,6 +2460,7 @@ input:focus-visible {
 
 .tactical-symbol.french,
 .tactical-symbol.french-base,
+.tactical-symbol.french-position,
 .tactical-symbol.landing,
 .tactical-symbol.signal {
   background: #295f7e;
@@ -2418,6 +2468,7 @@ input:focus-visible {
 
 .tactical-symbol.qing,
 .tactical-symbol.qing-position,
+.tactical-symbol.qing-guard,
 .tactical-symbol.battery,
 .tactical-symbol.mine,
 .tactical-symbol.sunken-ship {

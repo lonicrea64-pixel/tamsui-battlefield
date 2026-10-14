@@ -42,11 +42,13 @@ const factionOptions: Array<{ value: FactionFilter; label: string }> = [
 ];
 
 const layerOptions: Array<{ key: LayerKey; label: string }> = [
-  { key: "sites", label: "地點與史蹟" },
-  { key: "routes", label: "進攻與撤退" },
-  { key: "defenses", label: "城岸與阻絕線" },
-  { key: "zones", label: "事件熱區" },
-  { key: "fleet", label: "法國艦隊" }
+  { key: "terrain", label: "地形與地點" },
+  { key: "barriers", label: "城岸與阻隔" },
+  { key: "battleZones", label: "交戰區" },
+  { key: "facilities", label: "守軍設施（砲、水雷營等）" },
+  { key: "troops", label: "士兵" },
+  { key: "fleet", label: "法軍艦隊" },
+  { key: "heritage", label: "史蹟" }
 ];
 
 const archiveTabs: Array<{ id: ArchiveTab; label: string; icon: typeof Clock3 }> = [
@@ -523,7 +525,7 @@ export default function MainExperience() {
                   <button key={event.id} type="button" className={event.phase <= activePhase ? "reached" : ""} onClick={() => selectEvent(event.phase)} aria-label={`${event.date} ${event.shortTitle}`} title={`${event.date}｜${event.shortTitle}`}><span /></button>
                 ))}
               </div>
-              <div className="dock-label"><small>{currentEvent.date}</small><strong>{currentEvent.shortTitle}</strong></div>
+              <div className="dock-label"><small>{currentEvent.date}{currentEvent.date === "10 月 8 日" && currentEvent.time ? ` · ${currentEvent.time}` : ""}</small><strong>{currentEvent.shortTitle}</strong></div>
               <button type="button" className="step-button" disabled={activePhase === battleEvents.length - 1} onClick={() => selectEvent(Math.min(battleEvents.length - 1, activePhase + 1))} aria-label="下一個事件"><ChevronRight size={18} /></button>
             </section>
           ) : null}

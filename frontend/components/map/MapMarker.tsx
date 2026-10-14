@@ -10,12 +10,15 @@ import { HistoricalLocation, MapMode } from "@/types/historical";
 interface MapMarkerProps {
   location: HistoricalLocation;
   mode: MapMode;
+  coordinateOverride?: [number, number];
   active: boolean;
   onSelect: (locationId: string) => void;
 }
 
-export default function MapMarker({ location, mode, active, onSelect }: MapMarkerProps) {
-  const coordinates = location.coordinates;
+export default function MapMarker({ location, mode, coordinateOverride, active, onSelect }: MapMarkerProps) {
+  const coordinates = coordinateOverride ?? (mode === "modern"
+    ? location.modernCoordinates ?? location.coordinates
+    : location.coordinates);
   const icon = useMemo(() => {
     const accuracyClass = location.accuracy === "verified" ? "verified" : "uncertain";
     return divIcon({

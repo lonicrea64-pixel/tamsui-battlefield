@@ -12,11 +12,13 @@ export type LocationCategory =
   | "medical"
   | "memory"
   | "command";
-export type LayerKey = "sites" | "routes" | "defenses" | "zones" | "fleet";
+export type LayerKey = "terrain" | "barriers" | "battleZones" | "facilities" | "troops" | "fleet" | "heritage";
 
 export type TacticalSymbolKind =
   | "french-base"
+  | "french-position"
   | "qing-position"
+  | "qing-guard"
   | "battery"
   | "mine"
   | "sunken-ship"
@@ -46,6 +48,8 @@ export interface HistoricalLocation {
   modernName?: string;
   coordinates: [number, number];
   modernCoordinates?: [number, number];
+  modernCoordinatePoints?: Array<[number, number]>;
+  modernArea?: Array<[number, number]>;
   accuracy: LocationAccuracy;
   accuracyNote: string;
   category: LocationCategory;
@@ -74,6 +78,8 @@ export interface HistoricalSiteGeometry {
   positions: Array<[number, number]>;
   labelPosition: [number, number];
   note: string;
+  startPhase?: number;
+  endPhase?: number;
 }
 
 export interface TacticalSymbol {
